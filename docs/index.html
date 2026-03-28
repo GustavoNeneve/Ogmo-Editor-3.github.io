@@ -17,13 +17,43 @@
     <title>Ogmo Editor 3 - Manual</title>
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
+    <style>
+        #lang-toggle {
+            display: flex;
+            gap: 4px;
+            padding: 8px 16px;
+            margin-top: 8px;
+        }
+        #lang-toggle button {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 4px;
+            color: inherit;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85em;
+            padding: 2px 8px;
+        }
+        #lang-toggle button.active {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.8);
+            font-weight: 700;
+        }
+        .lang-section { display: none; }
+        .lang-section.active { display: block; }
+    </style>
 </head>
 <body id="manual">
     <div id="sidenav" class="shadow hide-sidebar">
         <img id="close" src="../img/icons-cross.png" />
         <a href="../"><img src="../img/logo-navbar.png" /></a>
+        <div id="lang-toggle">
+            <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+            <button id="btn-pt" onclick="setLang('pt-BR')">PT</button>
+        </div>
         <ol id="nav" style="margin-top:64px">
-            <li>
+            <!-- English navigation -->
+            <li class="lang-section lang-en active">
                 <span>Manual</span>
                 <ol>
                     <li>
@@ -52,7 +82,7 @@
                     <li><a href="#/manual/decal-layers.md">Decal Layers</a></li>
                 </ol>
             </li>
-            <li>
+            <li class="lang-section lang-en active">
                 <span>Reference</span>
                 <ol>
                     <li>
@@ -72,6 +102,53 @@
                     <!-- <li><a href="#/reference/attributions.md">Attributions</a></li> -->
                 </ol>
             </li>
+            <!-- Portuguese (pt-BR) navigation -->
+            <li class="lang-section lang-pt-BR">
+                <span>Manual</span>
+                <ol>
+                    <li>
+                        <a href="#/pt-BR/manual/introduction.md">Introdução</a>
+                        <ol class="sub-section">
+                            <li><a href="#/pt-BR/manual/introduction.md#about-ogmo-editor">Sobre o OGMO Editor</a></li>
+                        </ol>
+                    </li>
+                    <li>
+                        <a href="#/pt-BR/manual/getting_started.md">Primeiros Passos</a>
+                        <ol class="sub-section">
+                            <li><a href="#/pt-BR/manual/getting_started.md#starting-a-new-project">Iniciando um Novo Projeto</a></li>
+                            <li><a href="#/pt-BR/manual/getting_started.md#project-settings">Configurações do Projeto</a></li>
+                            <li><a href="#/pt-BR/manual/getting_started.md#adding-layers">Adicionando Camadas</a></li>
+                            <li><a href="#/pt-BR/manual/getting_started.md#adding-entities">Adicionando Entities</a></li>
+                            <li><a href="#/pt-BR/manual/getting_started.md#adding-tilesets">Adicionando Tilesets</a></li>
+                            <li><a href="#/pt-BR/manual/getting_started.md#saving-a-project">Salvando um Projeto</a></li>
+                            <li><a href="#/pt-BR/manual/getting_started.md#using-the-editor">Usando o Editor</a></li>
+                            <li><a href="#/pt-BR/manual/getting_started.md#saving-levels">Salvando Níveis</a></li>
+                            <li><a href="#/pt-BR/manual/getting_started.md#wrapping-up">Conclusão</a></li>
+                        </ol>
+                    </li>
+                    <li><a href="#/pt-BR/manual/tile-layers.md">Tile Layers</a></li>
+                    <li><a href="#/pt-BR/manual/grid-layers.md">Grid Layers</a></li>
+                    <li><a href="#/pt-BR/manual/entity-layers.md">Entity Layers</a></li>
+                    <li><a href="#/pt-BR/manual/decal-layers.md">Decal Layers</a></li>
+                </ol>
+            </li>
+            <li class="lang-section lang-pt-BR">
+                <span>Referência</span>
+                <ol>
+                    <li>
+                        <a href="#/pt-BR/reference/building.md">Compilando a partir do Código-Fonte</a>
+                        <ol class="sub-section">
+                            <li><a href="#/pt-BR/reference/building.md#preparing-node">Preparando o Node</a></li>
+                            <li><a href="#/pt-BR/reference/building.md#preparing-haxe">Preparando o Haxe</a></li>
+                            <li><a href="#/pt-BR/reference/building.md#building">Compilando</a></li>
+                            <li><a href="#/pt-BR/reference/building.md#development">Desenvolvimento</a></li>
+                            <li><a href="#/pt-BR/reference/building.md#packaging">Empacotando</a></li>
+                        </ol>
+                    </li>
+                    <li><a href="#/pt-BR/reference/project-customization.md">Personalização de Projeto</a></li>
+                    <li><a href="#/pt-BR/reference/contributing.md">Contribuindo</a></li>
+                </ol>
+            </li>
         </ol>
     </div>
     <div id="sidenav-spacer"></div>
@@ -84,7 +161,25 @@
 <script src="https://cdn.jsdelivr.net/npm/es6-promise/dist/es6-promise.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/unfetch/dist/unfetch.umd.js"></script>
 <script>
-     // sidenav toggles
+    // language toggle
+    var currentLang = localStorage.getItem('ogmo-docs-lang') || 'en';
+
+    function setLang(lang) {
+        currentLang = lang;
+        localStorage.setItem('ogmo-docs-lang', lang);
+        document.querySelectorAll('.lang-section').forEach(function(el) {
+            el.classList.remove('active');
+        });
+        document.querySelectorAll('.lang-' + lang).forEach(function(el) {
+            el.classList.add('active');
+        });
+        document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+        document.getElementById('btn-pt').classList.toggle('active', lang === 'pt-BR');
+    }
+
+    setLang(currentLang);
+
+    // sidenav toggles
     var open = document.getElementById('open');
     var close = document.getElementById('close');
     var sidenav = document.getElementById('sidenav');
